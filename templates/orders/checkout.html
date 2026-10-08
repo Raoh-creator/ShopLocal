@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load shop_extras %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<section class="checkout-page py-4 py-lg-5">
+    <div class="container">
+
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb checkout-breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Shop</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'cart:cart_detail' %}">Cart</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+            <div>
+                <h1 class="h3 fw-bold mb-1"><i class="bi bi-bag-check me-2 text-accent"></i>Checkout</h1>
+                <p class="text-muted mb-0">Almost there — tell us where to deliver and how you'd like to pay.</p>
+            </div>
+            <div class="d-flex align-items-center gap-2 checkout-secure-note">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Safe &amp; secure checkout</span>
+            </div>
+        </div>
+
+        <ol class="checkout-steps" aria-label="Checkout progress">
+            <li class="step-item is-done">
+                <span class="step-dot"><i class="bi bi-check-lg"></i></span>
+                <span class="step-label">Cart</span>
+            </li>
+            <li class="step-line" aria-hidden="true"></li>
+            <li class="step-item is-active">
+                <span class="step-dot">2</span>
+                <span class="step-label">Details</span>
+            </li>
+            <li class="step-line" aria-hidden="true"></li>
+            <li class="step-item">
+                <span class="step-dot">3</span>
+                <span class="step-label">Payment</span>
+            </li>
+            <li class="step-line" aria-hidden="true"></li>
+            <li class="step-item">
+                <span class="step-dot"><i class="bi bi-check-lg"></i></span>
+                <span class="step-label">Done</span>
+            </li>
+        </ol>
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger d-flex gap-2 align-items-start">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>{% for error in form.non_field_errors %}{{ error }}{% endfor %}</div>
+        </div>
+        {% endif %}
+
+        <form method="post" novalidate id="checkoutForm">
+            {% csrf_token %}
+            <div class="row g-4">
+
+                <div class="col-lg-7">
+                    <div class="checkout-card mb-4">
+                        <div class="checkout-card-head">
+                            <span class="head-icon"><i class="bi bi-geo-alt-fill"></i></span>
+                            <div>
+                                <h2 class="h6 fw-bold mb-0">Delivery Details</h2>
+                                <p class="small text-muted mb-0">Where should we bring your order?</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            {% for field in form %}
+                                {% if field.name == 'first_name' or field.name == 'last_name' %}
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                        {% if not field.field.required %}<span class="label-optional">optional</span>{% endif %}
+                                    </label>
+                                    <div class="field-icon">
+                                        {% if field.name == 'first_name' %}<i class="bi bi-person"></i>{% else %}<i class="bi bi-person-plus"></i>{% endif %}
+                                        {{ field }}
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% elif field.name == 'email' or field.name == 'phone' %}
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    <div class="field-icon">
+                                        {% if field.name == 'email' %}<i class="bi bi-envelope"></i>{% else %}<i class="bi bi-telephone"></i>{% endif %}
+                                        {{ field }}
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% elif field.name == 'village' %}
+                                <div class="col-sm-6">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    <div class="field-icon">
+                                        <i class="bi bi-pin-map"></i>
+                                        {{ field }}
+                                    </div>
+                                    <div class="form-text">The owner checks this to confirm delivery to your village.</div>
+                                    {% for error in field.errors %}
+                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% elif field.name == 'address' %}
+                                <div class="col-12">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    <div class="field-icon field-icon-area">
+                                        <i class="bi bi-house"></i>
+                                        {{ field }}
+                                    </div>
+                                    {% for error in field.errors %}
+                                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="checkout-card mb-4">
+                        <div class="checkout-card-head">
+                            <span class="head-icon"><i class="bi bi-credit-card-2-front-fill"></i></span>
+                            <div>
+                                <h2 class="h6 fw-bold mb-0">Payment Method</h2>
+                                <p class="small text-muted mb-0">No card details are stored on this site.</p>
+                            </div>
+                        </div>
+
+                        <div class="row g-2">
+                            {% for radio in form.payment_method %}
+                            {% if radio.data.value == 'UPI' and not upi_available %}
+                            {% else %}
+                            <div class="col-12">
+                                <div class="payment-option">
+                                    <div class="form-check">
+                                        {{ radio.tag }}
+                                        <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                            <span class="pay-label">
+                                                <i class="bi {{ radio.data.value|payment_icon }}"></i>
+                                                <span data-method-name>{{ radio.choice_label }}</span>
+                                            </span>
+                                            <span class="pay-hint">{{ radio.data.value|payment_hint }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% for error in form.payment_method.errors %}
+                        <div class="text-danger small mt-2"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                        {% endfor %}
+
+                        <div class="gpay-panel mt-3" id="gpayPanel"
+                             data-disabled="{% if upi_available %}0{% else %}1{% endif %}"
+                             {% if not upi_available %}hidden{% endif %}>
+                            <p class="small fw-semibold mb-2 text-center">
+                                {% if upi_qr %}Scan to pay with any UPI app{% else %}Pay with any UPI app{% endif %}
+                            </p>
+                            {% if upi_qr %}
+                            {% if upi_qr_is_dynamic %}
+                            <img src="{{ upi_qr }}" class="gpay-qr" width="625" height="704"
+                                 alt="UPI QR code for payment">
+                            {% else %}
+                            <picture>
+                                <source srcset="{{ upi_qr }}" type="image/webp">
+                                <img src="{{ upi_qr }}" class="gpay-qr" width="625" height="704"
+                                     alt="UPI QR code for payment" loading="lazy">
+                            </picture>
+                            {% endif %}
+                            {% else %}
+                            <a href="{{ upi_link }}" class="btn btn-accent w-100 mb-2">
+                                <i class="bi bi-google"></i> Pay {{ total|money }} with GPay
+                            </a>
+                            <p class="small text-muted text-center mb-0">No QR uploaded, so this opens your UPI app with the amount filled in.</p>
+                            {% endif %}
+                            {% if upi_qr %}
+                            <p class="small text-muted text-center mt-2 mb-0">
+                                Pay the total of <strong class="text-accent">{{ total|money }}</strong>, then place your order.
+                            </p>
+                            {% if not upi_qr_is_dynamic %}
+                            <p class="small text-muted text-center mt-1 mb-0">
+                                This QR does not include the amount. Use the button below to open your UPI app with it filled in.
+                            </p>
+                            {% endif %}
+                            {% endif %}
+                            {% if upi_link %}
+                            <a href="{{ upi_link }}" class="btn btn-outline-accent w-100 mt-2 mb-0">
+                                <i class="bi bi-google"></i> Pay {{ total|money }} with GPay
+                            </a>
+                            {% endif %}
+                            {% if upi_id %}
+                            <p class="small text-center text-muted mb-0 mt-2">
+                                UPI ID: <code class="upi-id">{{ upi_id }}</code>
+                                <button class="btn btn-link btn-sm p-0 ms-1 align-baseline" type="button"
+                                        data-copy-upi="{{ upi_id }}" aria-label="Copy UPI ID">copy</button>
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <div class="payment-gate mt-3" id="paymentGate" hidden>
+                            <div class="alert alert-warning d-flex gap-2 align-items-start mb-3 py-2 px-3">
+                                <i class="bi bi-lock-fill"></i>
+                                <div class="small">
+                                    Pay <strong>{{ total|money }}</strong> using
+                                    <strong id="gateMethodName">your chosen method</strong> first, then tick the box below to place your order.
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="{{ form.payment_proof.id_for_label }}">
+                                    Payment reference <span class="label-optional">optional</span>
+                                </label>
+                                <div class="field-icon">
+                                    <i class="bi bi-hash"></i>
+                                    {{ form.payment_proof }}
+                                </div>
+                                {% for error in form.payment_proof.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                                <div class="form-text">UPI reference number or transaction ID, so we can match your payment.</div>
+                            </div>
+                            <div class="form-check payment-confirm">
+                                {{ form.payment_confirmed }}
+                                <label class="form-check-label" for="{{ form.payment_confirmed.id_for_label }}">
+                                    I have completed the payment of <strong class="text-accent">{{ total|money }}</strong>
+                                </label>
+                                {% for error in form.payment_confirmed.errors %}
+                                <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkout-submit-bar">
+                        <div class="submit-bar-inner">
+                            <div class="submit-bar-total">
+                                <span class="small text-muted d-block">Order total</span>
+                                <span class="submit-bar-amount">{{ total|money }}</span>
+                            </div>
+                            <button class="btn btn-accent btn-lg flex-grow-1" type="submit" id="placeOrderBtn">
+                                <i class="bi bi-lock-fill me-1"></i> Place Order
+                            </button>
+                        </div>
+                        <p class="small text-muted text-center mt-2 mb-0">
+                            <i class="bi bi-truck me-1"></i>Local delivery · Pay safely on delivery or via UPI
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="checkout-summary">
+                        <div class="summary-head">
+                            <h2 class="h6 fw-bold mb-0"><i class="bi bi-receipt me-2 text-accent"></i>Order Summary</h2>
+                            <a href="{% url 'cart:cart_detail' %}" class="small">Edit</a>
+                        </div>
+
+                        <ul class="summary-list">
+                            {% for item in items %}
+                            <li class="summary-item">
+                                <img class="summary-thumb"
+                                     src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'img/no-image.svg' %}{% endif %}"
+                                     width="48" height="48" alt="{{ item.product.name }}" loading="lazy">
+                                <div class="summary-body">
+                                    <a href="{{ item.product.get_absolute_url }}" class="summary-name">{{ item.product.name }}</a>
+                                    <div class="summary-meta">
+                                        {{ item.product.price|money }} <span class="summary-qty">x {{ item.quantity }}</span>
+                                    </div>
+                                </div>
+                                <span class="summary-subtotal">{{ item.subtotal|money }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="summary-totals">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span>{{ total|money }}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery</span>
+                                <span class="text-success fw-semibold">Free</span>
+                            </div>
+                            <div class="summary-row summary-row-total">
+                                <span>Total</span>
+                                <span class="text-accent">{{ total|money }}</span>
+                            </div>
+                        </div>
+
+                        <ul class="trust-list">
+                            <li><i class="bi bi-patch-check-fill"></i> Stock confirmed before dispatch</li>
+                            <li><i class="bi bi-cash-coin"></i> Cash on delivery available</li>
+                            <li><i class="bi bi-shield-check"></i> We never store card details</li>
+                        </ul>
+
+                        <div class="d-flex align-items-center gap-2 summary-help">
+                            <i class="bi bi-headset"></i>
+                            <span class="small">Questions? <a href="{% url 'pages:contact' %}">Contact us</a> before you order.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var COD = 'COD';
+    var panel = document.getElementById('gpayPanel');
+    var gate = document.getElementById('paymentGate');
+    var btn = document.getElementById('placeOrderBtn');
+    var radios = document.querySelectorAll('input[name="payment_method"]');
+    var confirmBox = document.getElementById('id_payment_confirmed');
+    var methodName = document.getElementById('gateMethodName');
+    var labels = {};
+    radios.forEach(function (r) {
+        var lab = document.querySelector('label[for="' + r.id + '"]');
+        var named = lab && lab.querySelector('[data-method-name]');
+        labels[r.value] = named ? named.textContent.trim() : r.value;
+    });
+
+    function sync() {
+        var picked = document.querySelector('input[name="payment_method"]:checked');
+        var value = picked ? picked.value : '';
+        var prepaid = value !== '' && value !== COD;
+
+        if (panel) {
+            panel.hidden = (value !== 'UPI') || panel.dataset.disabled === '1';
+        }
+        if (gate) gate.hidden = !prepaid;
+        if (methodName && prepaid) methodName.textContent = labels[value] || value;
+        if (btn) btn.disabled = prepaid && !(confirmBox && confirmBox.checked);
+        if (!prepaid && confirmBox) confirmBox.checked = false;
+    }
+
+    radios.forEach(function (r) { r.addEventListener('change', sync); });
+    if (confirmBox) confirmBox.addEventListener('change', sync);
+    sync();
+
+    document.querySelectorAll('[data-copy-upi]').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var value = el.dataset.copyUpi;
+            var done = function () {
+                var original = el.textContent;
+                el.textContent = 'copied';
+                setTimeout(function () { el.textContent = original; }, 1500);
+            };
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(value).then(done);
+            } else {
+                var tmp = document.createElement('textarea');
+                tmp.value = value;
+                document.body.appendChild(tmp);
+                tmp.select();
+                document.execCommand('copy');
+                document.body.removeChild(tmp);
+                done();
+            }
+        });
+    });
+
+    var form = document.getElementById('checkoutForm');
+    form.addEventListener('submit', function () {
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Placing your order...';
+        }
+    });
+})();
+</script>
+{% endblock %}

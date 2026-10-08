@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load shop_extras %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+
+<section class="py-5">
+    <div class="container" style="max-width: 980px;">
+        <h1 class="fw-bold mb-4"><i class="bi bi-receipt"></i> My Orders</h1>
+
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table align-middle bg-white shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td class="fw-semibold">#{{ order.pk }}</td>
+                        <td>{{ order.created_at|date:'M d, Y' }}</td>
+                        <td>{{ order.items.count }}</td>
+                        <td class="price-tag">{{ order.total|money }}</td>
+                        <td><span class="badge text-bg-primary">{{ order.get_status_display }}</span></td>
+                        <td class="text-end">
+                            <a href="{{ order.get_absolute_url }}" class="btn btn-sm btn-outline-accent">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card auth-card p-5 text-center">
+            <div class="fs-1 text-muted"><i class="bi bi-inbox"></i></div>
+            <h4>No orders yet</h4>
+            <p class="text-muted">When you place an order it will show up here.</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-accent mx-auto px-4">Start Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

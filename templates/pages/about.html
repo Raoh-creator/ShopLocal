@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}About Us{% endblock %}
+{% block content %}
+
+<section class="section-navy py-5">
+    <div class="container py-4 text-center">
+        <h1 class="display-5 fw-bold">About <span class="hero-accent">{{ shop_name }}</span></h1>
+        <p class="lead text-white-50 mb-0">Supporting local businesses, one order at a time.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold">Our Story</h2>
+                <p>
+                    {{ shop_name }} started as a small neighborhood shop with a big idea:
+                    bring the best local products to your doorstep. Today we serve hundreds of
+                    happy customers with a carefully curated catalog and a checkout experience
+                    that just works.
+                </p>
+                <p class="mb-0">
+                    Every product is sourced with care, priced fairly, and shipped fast.
+                    When you shop with us you are not just buying a product — you are supporting
+                    your local community.
+                </p>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3 text-center">
+                    <div class="col-6">
+                        <div class="card auth-card p-4 h-100">
+                            <div class="fs-1 text-accent"><i class="bi bi-truck"></i></div>
+                            <h5 class="fw-bold">Fast Delivery</h5>
+                            <p class="small text-muted mb-0">Locations near us ship same day.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card auth-card p-4 h-100">
+                            <div class="fs-1 text-accent"><i class="bi bi-emoji-smile"></i></div>
+                            <h5 class="fw-bold">Happy Customers</h5>
+                            <p class="small text-muted mb-0">Quality you can trust, every time.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card auth-card p-4 h-100">
+                            <div class="fs-1 text-accent"><i class="bi bi-shield-check"></i></div>
+                            <h5 class="fw-bold">Secure Checkout</h5>
+                            <p class="small text-muted mb-0">Guest or account — checkout is safe.</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card auth-card p-4 h-100">
+                            <div class="fs-1 text-accent"><i class="bi bi-headset"></i></div>
+                            <h5 class="fw-bold">Real Support</h5>
+                            <p class="small text-muted mb-0">WhatsApp, email, or the contact form.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

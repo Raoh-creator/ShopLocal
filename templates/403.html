@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Access Denied{% endblock %}
+{% block content %}
+
+<section class="py-5">
+    <div class="container text-center" style="max-width: 520px;">
+        <div class="card auth-card p-5">
+            <div class="fs-1 text-warning"><i class="bi bi-shield-lock"></i></div>
+            <h2 class="fw-bold mt-2">403 - Access Denied</h2>
+            <p class="text-muted">You need to be logged in as a shop owner or administrator to view this page.</p>
+            <a href="{% url 'pages:home' %}" class="btn btn-accent mx-auto px-4">Back to Home</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

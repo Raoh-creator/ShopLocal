@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load shop_extras %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'pages:home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Shop</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-5">
+            <div class="col-md-6">
+                <div class="card card-product">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100" style="max-height: 480px; object-fit: cover;">
+                    {% else %}
+                    <img src="{% static 'img/no-image.svg' %}" alt="{{ product.name }}" class="w-100" style="max-height: 480px; object-fit: cover;">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <a href="{% url 'store:product_list' %}?category={{ product.category.slug }}" class="text-accent text-decoration-none">
+                    {{ product.category.name }}
+                </a>
+                <h1 class="fw-bold">{{ product.name }}</h1>
+                <div class="price-tag fs-3">{{ product.price|money }}</div>
+                <div class="small mb-3">
+                    {% if product.out_of_stock %}
+                    <span class="badge badge-out-of-stock fs-6">Out of Stock</span>
+                    {% else %}
+                    <span class="badge bg-success fs-6">In Stock</span>
+                    {% endif %}
+                </div>
+                <p class="text-muted">{{ product.description|linebreaksbr }}</p>
+
+                {% if product.in_stock %}
+                <form method="post" action="{% url 'cart:add' product.pk %}" class="d-flex align-items-center gap-2 mb-3 product-actions">
+                    {% csrf_token %}
+                    <div class="input-group" style="width: 140px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input').stepDown()">-</button>
+                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" class="form-control text-center">
+                        <button class="btn btn-outline-secondary" type="button" onclick="this.parentNode.querySelector('input').stepUp()">+</button>
+                    </div>
+                    <button class="btn btn-accent btn-lg flex-grow-1" type="submit"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+                    <button class="btn btn-success btn-lg" type="submit" onclick="this.form.action='{% url 'cart:buy' product.pk %}'"><i class="bi bi-lightning-charge"></i> Buy Now</button>
+                </form>
+                {% else %}
+                <button class="btn btn-secondary btn-lg w-100" disabled>Out of Stock</button>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if related %}
+        <div class="mt-5">
+            <h2 class="fs-4 fw-bold mb-3">You may also like</h2>
+            <div class="row g-4">
+                {% for product in related %}
+                <div class="col-6 col-md-3">
+                    <div class="card card-product h-100">
+                        <a href="{{ product.get_absolute_url }}" class="product-img-wrap d-block">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                            <img src="{% static 'img/no-image.svg' %}" alt="{{ product.name }}">
+                            {% endif %}
+                        </a>
+                        <div class="card-body">
+                            <h6 class="card-title">{{ product.name }}</h6>
+                            <div class="price-tag">{{ product.price|money }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

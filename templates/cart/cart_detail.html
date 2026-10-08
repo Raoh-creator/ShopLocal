@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load shop_extras %}
+{% block title %}Shopping Cart{% endblock %}
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+        <h1 class="fw-bold mb-4"><i class="bi bi-cart3"></i> Your Cart</h1>
+
+        {% if items %}
+        <div class="table-responsive">
+            <table class="table align-middle bg-white shadow-sm rounded cart-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th class="text-center" style="width: 160px;">Quantity</th>
+                        <th class="text-end">Subtotal</th>
+                        <th class="text-end"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{% if item.product.image %}{{ item.product.image.url }}{% else %}{% static 'img/no-image.svg' %}{% endif %}"
+                                     width="60" height="60" style="object-fit: cover; border-radius: .5rem;" alt="{{ item.product.name }}">
+                                <div>
+                                    <a href="{{ item.product.get_absolute_url }}" class="fw-semibold text-decoration-none">{{ item.product.name }}</a>
+                                    <div class="small text-muted">{{ item.product.category.name }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ item.product.price|money }}</td>
+                        <td>
+                            <form method="post" action="{% url 'cart:update' item.product.pk %}" class="d-flex gap-2 flex-wrap">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}"
+                                       min="1" max="{{ item.product.stock }}" class="form-control form-control-sm text-center">
+                                <button class="btn btn-sm btn-outline-accent" type="submit">Update</button>
+                            </form>
+                        </td>
+                        <td class="text-end price-tag">{{ item.subtotal|money }}</td>
+                        <td class="text-end">
+                            <form method="post" action="{% url 'cart:remove' item.product.pk %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-light">
+                        <td colspan="3" class="text-end fw-bold">Total:</td>
+                        <td class="text-end fs-5 fw-bold text-accent">{{ total|money }}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <form method="post" action="{% url 'cart:clear' %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-x-circle"></i> Clear Cart</button>
+            </form>
+            <div class="d-flex flex-wrap gap-2 justify-content-lg-end cart-actions">
+                <a href="{% url 'store:product_list' %}" class="btn btn-outline-accent me-2">Continue Shopping</a>
+                <a href="{% url 'orders:checkout' %}" class="btn btn-accent btn-lg"><i class="bi bi-check2-circle"></i> Proceed to Checkout</a>
+            </div>
+        </div>
+        {% else %}
+        <div class="card auth-card p-5 text-center">
+            <div class="fs-1 text-muted"><i class="bi bi-cart-x"></i></div>
+            <h4>Your cart is empty</h4>
+            <p class="text-muted">Browse the store and add something you like.</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-accent mx-auto px-4">Start Shopping</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

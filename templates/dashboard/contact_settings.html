@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Contact Settings{% endblock %}
+{% block content %}
+
+<section class="py-5">
+    <div class="container" style="max-width: 760px;">
+        <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+            <div>
+                <h1 class="fw-bold mb-1"><i class="bi bi-telephone-forward"></i> Contact Settings</h1>
+                <p class="text-muted mb-0">Update your shop's public contact details shown on the Contact page.</p>
+            </div>
+            <a href="{% url 'dashboard:home' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+        </div>
+
+        <div class="card auth-card p-4">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                    {% endfor %}
+                    {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-accent" type="submit"><i class="bi bi-check2"></i> Save Contact Details</button>
+                    <a href="{% url 'dashboard:home' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="alert alert-light border mt-4 mb-0 small">
+            <i class="bi bi-info-circle me-1 text-accent"></i>
+            These values override the <code>.env</code> file once saved. On a fresh install they're seeded from <code>.env</code> automatically.
+        </div>
+    </div>
+</section>
+
+{% endblock %}

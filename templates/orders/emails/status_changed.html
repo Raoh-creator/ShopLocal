@@ -1,0 +1,97 @@
+{% load shop_extras %}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order #{{ order_number }} {{ status_display }}</title>
+</head>
+<body style="margin:0;padding:0;background:#F1F5F9;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;color:#0F172A;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F1F5F9;padding:24px 12px;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(15,23,42,.08);">
+
+                <tr>
+                    <td style="background:{{ accent }};padding:20px 28px;">
+                        <span style="color:#ffffff;font-size:18px;font-weight:700;letter-spacing:-.02em;">{{ shop_name }}</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:28px 28px 8px 28px;">
+                        <p style="margin:0 0 6px 0;font-size:13px;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;">
+                            Order #{{ order_number }}
+                        </p>
+                        <h1 style="margin:0 0 12px 0;font-size:22px;line-height:1.25;color:#0F172A;">{{ headline }}</h1>
+                        <p style="margin:0 0 20px 0;font-size:15px;line-height:1.6;color:#334155;">Hi {{ customer_name }}, {{ body }}</p>
+
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:8px;margin-bottom:20px;">
+                            <tr>
+                                <td style="padding:14px 18px;">
+                                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                        <tr>
+                                            <td style="font-size:13px;color:#64748B;">Status</td>
+                                            <td align="right" style="font-size:14px;font-weight:700;color:{{ accent }};">{{ status_display }}</td>
+                                        </tr>
+                                        {% if previous_status_display %}
+                                        <tr>
+                                            <td style="font-size:13px;color:#64748B;padding-top:6px;">Previous status</td>
+                                            <td align="right" style="font-size:13px;color:#94A3B8;padding-top:6px;">{{ previous_status_display }}</td>
+                                        </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td style="font-size:13px;color:#64748B;padding-top:6px;">Order total</td>
+                                            <td align="right" style="font-size:14px;font-weight:700;color:#0F172A;padding-top:6px;">{{ total|money }}</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+
+                        {% if items %}
+                        <p style="margin:0 0 8px 0;font-size:13px;font-weight:600;color:#0F172A;">Items in this order</p>
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                            {% for item in items %}
+                            <tr>
+                                <td style="padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:14px;color:#334155;">
+                                    {{ item.name }} <span style="color:#94A3B8;">x{{ item.quantity }}</span>
+                                </td>
+                                <td align="right" style="padding:8px 0;border-bottom:1px solid #F1F5F9;font-size:14px;color:#0F172A;white-space:nowrap;">
+                                    {{ item.subtotal|money }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% endif %}
+
+                        {% if order_url %}
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:20px;">
+                            <tr>
+                                <td style="background:{{ accent }};border-radius:8px;">
+                                    <a href="{{ order_url }}" style="display:inline-block;padding:12px 24px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">View your order</a>
+                                </td>
+                            </tr>
+                        </table>
+                        {% endif %}
+
+                        <p style="margin:0;font-size:13px;line-height:1.6;color:#94A3B8;">
+                            Questions about this order?{% if support_email %} Reply to this email or write to
+                            <a href="mailto:{{ support_email }}" style="color:#F97316;">{{ support_email }}</a>.{% else %} Please contact us.{% endif %}
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding:18px 28px;background:#0A192F;">
+                        <p style="margin:0;font-size:12px;color:rgba(255,255,255,.6);">
+                            You are receiving this because you placed an order with {{ shop_name }}.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

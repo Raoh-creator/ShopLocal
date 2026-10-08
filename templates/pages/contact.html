@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us{% endblock %}
+{% block content %}
+
+<section class="section-navy py-5">
+    <div class="container py-4 text-center">
+        <h1 class="display-5 fw-bold">Contact <span class="hero-accent">{{ shop_name }}</span></h1>
+        <p class="lead text-white-50 mb-0">Questions, feedback, or a custom order? Reach us any way you like.</p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card auth-card p-4">
+                    <h4 class="fw-bold mb-3">Send us a message</h4>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                        <button class="btn btn-accent" type="submit"><i class="bi bi-send"></i> Send via Email</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                {% if tel_link %}
+                <div class="card auth-card p-4 mb-3 contact-call-card">
+                    <h4 class="fw-bold mb-2">Call the shop</h4>
+                    <p class="text-muted">For urgent queries or to confirm stock, give us a ring.</p>
+                    <a href="{{ tel_link }}" class="btn call-btn btn-lg w-100">
+                        <i class="bi bi-telephone-fill"></i> Call {{ phone_number }}
+                    </a>
+                    <p class="small text-muted text-center mt-2 mb-0">
+                        {% if opening_hours %}<i class="bi bi-clock me-1"></i>{{ opening_hours }}{% endif %}
+                    </p>
+                </div>
+                {% endif %}
+                <div class="card auth-card p-4 mb-3">
+                    <h4 class="fw-bold mb-2">Chat instantly</h4>
+                    <p class="text-muted">Tap a button and your message opens pre-filled in the app of your choice.</p>
+                    <a href="{{ whatsapp_link }}" target="_blank" class="btn whatsapp-btn btn-lg w-100 mb-2 pulse">
+                        <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                    <a href="{{ gmail_link }}" target="_blank" class="btn gmail-btn btn-lg w-100">
+                        <i class="bi bi-envelope-at"></i> Compose via Gmail
+                    </a>
+                </div>
+                <div class="card auth-card p-4">
+                    <h4 class="fw-bold mb-3">Store details</h4>
+                    <ul class="list-unstyled mb-0">
+                        {% if tel_link %}
+                        <li class="mb-2"><i class="bi bi-telephone text-accent"></i>
+                            <a href="{{ tel_link }}" class="text-decoration-none">{{ phone_number }}</a>
+                        </li>
+                        {% endif %}
+                        {% if contact_email %}
+                        <li class="mb-2"><i class="bi bi-envelope text-accent"></i>
+                            <a href="mailto:{{ contact_email }}" class="text-decoration-none">{{ contact_email }}</a>
+                        </li>
+                        {% endif %}
+                        {% if whatsapp_number %}
+                        <li class="mb-2"><i class="bi bi-whatsapp text-accent"></i>
+                            <a href="https://wa.me/{{ whatsapp_number }}" class="text-decoration-none" target="_blank">WhatsApp</a>
+                        </li>
+                        {% endif %}
+                        {% if contact_address %}
+                        <li class="mb-2"><i class="bi bi-geo-alt text-accent"></i> {{ contact_address }}</li>
+                        {% endif %}
+                        {% if opening_hours %}
+                        <li><i class="bi bi-clock text-accent"></i> {{ opening_hours }}</li>
+                        {% elif shop_name %}
+                        <li><i class="bi bi-clock text-accent"></i> Mon – Sat: 9:00 AM – 8:00 PM</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
