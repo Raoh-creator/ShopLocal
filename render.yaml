@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: shoplocal-demo
+    runtime: python
+    plan: free
+    healthCheckPath: /store/
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: python manage.py migrate --noinput && gunicorn ShopLocal.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CONTACT_EMAIL
+        value: onlinedusbin@gmail.com
+      - key: WHATSAPP_NUMBER
+        value: "8837351115"
+      - key: PHONE_NUMBER
+        value: "8837351115"
+      - key: SHOP_NAME
+        value: LocalShop
